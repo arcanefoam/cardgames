@@ -16,7 +16,5 @@ class PokerCard implements FrenchCard {
     public function rank(): int {
         return $this->rank;
     }
-
-    
     
 }

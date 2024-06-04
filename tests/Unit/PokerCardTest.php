@@ -30,7 +30,7 @@ class PokerCardTest extends TestCase
      * @dataProvider negativeRanks
      * @test
      */
-    public function throws_if_rank_lt_one ($rank): void {
+    public function throws_if_rank_lt_one($rank): void {
         $this->expectException(CardException::class);
         new PokerCard(FrenchSuit::Clubs, $rank);
     }
@@ -39,7 +39,7 @@ class PokerCardTest extends TestCase
      * @dataProvider higherRanks
      * @test
      */
-    public function throws_if_rank_gt_fourteen ($rank): void {
+    public function throws_if_rank_gt_fourteen($rank): void {
         $this->expectException(CardException::class);
         new PokerCard(FrenchSuit::Clubs, $rank);
     }

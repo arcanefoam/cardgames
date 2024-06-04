@@ -7,11 +7,10 @@ interface FrenchCard extends Card {
     function rank(): int;
 }
 
-enum FrenchSuit : string
-{
-    case Hearts = 'H';
-    case Diamonds = 'D';
+enum FrenchSuit : string {
     case Clubs = 'C';
+    case Diamonds = 'D';
+    case Hearts = 'H';
     case Spades = 'S';
 }
 

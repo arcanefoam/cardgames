@@ -22,7 +22,7 @@ class PokerDeck implements Deck {
     public function reset(): Deck {
         $cards = array();
         foreach (FrenchSuit::cases() as $suit) {
-            foreach (range(1, 13) as $rank ) {
+            foreach (range(2, 14) as $rank ) {
                 $cards[] = new PokerCard($suit, $rank);
             }
         }
@@ -45,7 +45,9 @@ class PokerDeck implements Deck {
     }
 
     public function shuffle(): Deck {
-        
+        $shuffled = $this->cards;
+        shuffle($shuffled);
+        return new PokerDeck($shuffled);
     }
     
     public  function left(): int {

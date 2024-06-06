@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit;
+namespace Tests\Unit\Data\Cards;
 
 use PHPUnit\Framework\TestCase;
 use App\Data\Cards\FrenchSuit;
@@ -40,7 +40,7 @@ class PokerDeckTest extends TestCase {
             }
         }
         $this->assertCount(13, $cards);
-        $index = 1;
+        $index = 2;
         // Suits are ordered
         foreach ($cards as $c) {
             $this->assertEquals($index, $c->rank());

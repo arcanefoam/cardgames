@@ -41,7 +41,7 @@ class PokerDeck implements Deck {
     }
 
     public function place(Card $card): Deck {
-        
+        return $this;
     }
 
     public function shuffle(): Deck {

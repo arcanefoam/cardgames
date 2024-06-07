@@ -24,7 +24,8 @@ class SimpleTrick implements Trick {
     }
 
     function trick(): array {
-        return array_map(fn($t) => $t->card, $this->trick);
+        $result = $this->trick;
+        return $result;
     }
 
     function complete(): bool {
@@ -38,7 +39,7 @@ class SimpleTrick implements Trick {
         if ($player->id() !== $this->currentPlayer) {
             throw new Exception("The play was not made by the current player");
         }
-        if (($valid)($this->trick(), $this->currentPlayer())) {
+        if (($valid)($this->trick(), $card, $player)) {
             $this->trick[] = new TrickCard($player->id(), $card);
             // Next player
             $next = next($this->players);
@@ -52,6 +53,14 @@ class SimpleTrick implements Trick {
         
     }
 
+    public function __toString() {
+        $result = "";
+        foreach($this->trick as $trick) {
+            $result .= " ".$trick;
+        }
+        return $result;
+    }
+
     private int $currentPlayer;
     private array $trick;
 
@@ -59,7 +68,20 @@ class SimpleTrick implements Trick {
 
 class TrickCard {
 
-    public function __construct(public int $playerId, public Card $card)    {
+    public function __construct(private int $playerId, private Card $card)    {
         
+    }
+
+    public function playerId(): int {
+        return $this->playerId;
+    }
+
+
+    public function card(): Card {
+        return $this->card;
+    }
+
+    public function __toString() {
+        return "P ".$this->playerId." => ".$this->card;
     }
 }

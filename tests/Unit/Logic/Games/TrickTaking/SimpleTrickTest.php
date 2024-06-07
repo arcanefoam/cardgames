@@ -105,4 +105,28 @@ class SimpleTrickTest extends TestCase {
         $this->expectException(Exception::class);
         $trick->play($players[2], new PokerCard(FrenchSuit::Clubs, 6), fn($a, $b) => true);
     }
+
+    /**
+     * @test
+     */
+    public function trick_returns_cards_played() {
+        $players = [
+            1 => new WhistPlayer(1, "John"),
+            2 => new WhistPlayer(2, "Jane"),
+            3 => new WhistPlayer(3, "Mark"),
+            4 => new WhistPlayer(4, "Laura"),
+        ];
+        $trick = new SimpleTrick($players, 1);
+        $trick->play($players[1], new PokerCard(FrenchSuit::Clubs, 2), fn($a, $b) => true);
+        $played = $trick->trick();
+        $this->assertNotNull($played);
+        $this->assertCount(1, $played);
+        $this->assertEquals($played[0]->card()->suit(), FrenchSuit::Clubs);
+        $this->assertEquals($played[0]->card()->rank(), 2);
+        $trick->play($players[2], new PokerCard(FrenchSuit::Diamonds, 3), fn($a, $b) => true);
+        $played = $trick->trick();
+        $this->assertCount(2, $played);
+        $this->assertEquals($played[1]->card()->suit(), FrenchSuit::Diamonds);
+        $this->assertEquals($played[1]->card()->rank(), 3);
+    }
 }

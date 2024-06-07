@@ -2,19 +2,20 @@
 
 namespace App\Logic\Games\TrickTaking;
 
-use App\Logic\Games\Player;
+use App\Data\Cards\Card;
+use App\Data\Game\Player;
 
 interface Hand {
 
     /**
      * The trick being played
      */
-    function currentTrick(): Trick;
+    function nextTrick(): Hand;
 
     /**
      * Pick the Player that will be the initial Lead
      */
-    function initialLead(): Player;
+    function nextLead(): Player;
 
      /**
      * True if the hand is complete, i.e. all tricks have been played.
@@ -27,9 +28,12 @@ interface Hand {
     function scores(): array;
 
     /**
-     * Determine the next Player to lead based on the provided Trick.
-     * 
-     * This will depends on the rules of the hand.
+     * Play a card
+     * @param Player    $player The player making the play
+     * @param Card      $card   The card played by the player
+     * @param callable  $valid  A function to validate if the play is valid. The callable accepts 
+     *                          an array of cards that has been played and the player 
      */
-    function nextLead(array $trick): Player;
+    function play(Player $player, Card $card, callable $valid);
+
 }

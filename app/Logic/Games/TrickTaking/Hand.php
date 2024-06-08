@@ -3,9 +3,16 @@
 namespace App\Logic\Games\TrickTaking;
 
 use App\Data\Cards\Card;
+use App\Data\Cards\Deck;
 use App\Data\Game\Player;
 
 interface Hand {
+
+
+    /**
+     * Start the Hand with the given deck
+     */
+    function start(Deck $deck): Hand;
 
     /**
      * The trick being played

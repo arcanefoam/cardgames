@@ -4,7 +4,7 @@ namespace App\Logic\Games\TrickTaking;
 
 use \Exception;
 use App\Data\Cards\Card;
-use App\Data\Cards\PokerDeck;
+use App\Data\Cards\Deck;
 use App\Data\Game\Player;
 
 
@@ -17,27 +17,30 @@ class WhistHand implements Hand {
         ) {
     }
 
+    /**
+     * We assume the deck is ready to use
+     */
+    public function start(Deck $deck): Hand {
+        foreach ($this->players as $player) {
+            $cards = $deck->draw(13);
+            $player->startHand($cards);
+        }
+        return new WhistHand(
+            $this->players, 
+            $this->leadId,
+            [new SimpleTrick($this->players, $this->leadId)]);
+    }
+
     public function nextTrick(): Hand {
         if ($this->complete()) {
             return $this;
         }
-        if (!$this->tricks) {
-            // Deal cards - This could be done in a "init" method
-            $deck = new PokerDeck();
-            $deck = $deck->reset()->shuffle();
-            foreach ($this->players as $player) {
-                $cards = $deck->draw(13);
-                $player->startHand($cards);
-            }
-            return new WhistHand($this->players, $this->leadId, [new SimpleTrick($this->players, $this->leadId)]);
-        } else {
-            if (end($this->tricks)->complete()) {
-                $leadId = $this->next();
-                return new WhistHand(
-                    $this->players,
-                    $leadId,
-                    array_merge($this->tricks, [new SimpleTrick($this->players, $leadId)]));
-            }
+        if (end($this->tricks)->complete()) {
+            $leadId = $this->next();
+            return new WhistHand(
+                $this->players,
+                $leadId,
+                array_merge($this->tricks, [new SimpleTrick($this->players, $leadId)]));
         }
         return $this;
     }

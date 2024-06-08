@@ -5,6 +5,7 @@ namespace Tests\Unit\Logic\Games\TrickTaking;
 use \Exception;
 use PHPUnit\Framework\TestCase;
 use App\Data\Cards\FrenchCard;
+use App\Data\Cards\PokerDeck;
 use App\Data\Game\Player;
 use App\Logic\Games\TrickTaking\Trick;
 use App\Logic\Games\TrickTaking\WhistHand;
@@ -24,6 +25,9 @@ class WhistHandTest extends TestCase {
             4 => new WhistPlayer(4, "Laura"),
         ];
         $hand = new WhistHand($players, 1);
+        $deck = new PokerDeck();
+        $deck = $deck->reset()->shuffle();
+        $hand = $hand->start($deck);
         $trick = $hand->nextTrick();
         $this->assertNotNull($trick);
     }
@@ -39,6 +43,9 @@ class WhistHandTest extends TestCase {
             4 => new WhistPlayer(4, "Laura"),
         ];
         $hand = new WhistHand($players, 1);
+        $deck = new PokerDeck();
+        $deck = $deck->reset()->shuffle();
+        $hand = $hand->start($deck);
         $trick1 = $hand->nextTrick();
         $trick2 = $hand->nextTrick();
         $this->assertEquals($trick1, $trick2);
@@ -55,6 +62,9 @@ class WhistHandTest extends TestCase {
             4 => new WhistPlayer(4, "Laura"),
         ];
         $hand = new WhistHand($players, 1);
+        $deck = new PokerDeck();
+        $deck = $deck->reset()->shuffle();
+        $hand = $hand->start($deck);
         $trick1 = $hand->nextTrick();
         // Play the hand
         $trick1->play($players[1], $players[1]->play(), fn($a, $b) => true);
@@ -76,6 +86,9 @@ class WhistHandTest extends TestCase {
             4 => new WhistPlayer(4, "Laura"),
         ];
         $hand = new WhistHand($players, 1);
+        $deck = new PokerDeck();
+        $deck = $deck->reset()->shuffle();
+        $hand = $hand->start($deck);
         $hand = $hand->nextTrick();
         // Play the hand
         $valid = function (array $cards, FrenchCard $c, Player $p) {

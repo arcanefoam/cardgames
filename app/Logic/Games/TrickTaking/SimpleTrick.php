@@ -65,23 +65,3 @@ class SimpleTrick implements Trick {
     private array $trick;
 
 }
-
-class TrickCard {
-
-    public function __construct(private int $playerId, private Card $card)    {
-        
-    }
-
-    public function playerId(): int {
-        return $this->playerId;
-    }
-
-
-    public function card(): Card {
-        return $this->card;
-    }
-
-    public function __toString() {
-        return "P ".$this->playerId." => ".$this->card;
-    }
-}

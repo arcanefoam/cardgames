@@ -6,7 +6,7 @@ use \Exception;
 use PHPUnit\Framework\TestCase;
 use App\Data\Cards\FrenchCard;
 use App\Data\Cards\PokerDeck;
-use App\Data\Game\Player;
+use App\Data\Cards\CardPlayer;
 use App\Logic\Games\TrickTaking\Trick;
 use App\Logic\Games\TrickTaking\WhistHand;
 use App\Logic\Games\TrickTaking\WhistPlayer;
@@ -67,10 +67,10 @@ class WhistHandTest extends TestCase {
         $hand = $hand->start($deck);
         $trick1 = $hand->nextTrick();
         // Play the hand
-        $trick1->play($players[1], $players[1]->play(), fn($a, $b) => true);
-        $trick1->play($players[2], $players[2]->play(), fn($a, $b) => true);
-        $trick1->play($players[3], $players[3]->play(), fn($a, $b) => true);
-        $trick1->play($players[4], $players[4]->play(), fn($a, $b) => true);
+        $trick1->play($players[1], $players[1]->play($hand), fn($a, $b) => true);
+        $trick1->play($players[2], $players[2]->play($hand), fn($a, $b) => true);
+        $trick1->play($players[3], $players[3]->play($hand), fn($a, $b) => true);
+        $trick1->play($players[4], $players[4]->play($hand), fn($a, $b) => true);
         $trick2 = $hand->nextTrick();
         $this->assertNotEquals($trick1, $trick2);
     }
@@ -91,7 +91,7 @@ class WhistHandTest extends TestCase {
         $hand = $hand->start($deck);
         $hand = $hand->nextTrick();
         // Play the hand
-        $valid = function (array $cards, FrenchCard $c, Player $p) {
+        $valid = function (array $cards, FrenchCard $c, CardPlayer $p) {
             if (count($cards) == 0) {
                 return true;
             }
@@ -101,47 +101,24 @@ class WhistHandTest extends TestCase {
             }
             return true;
         };
-        $tcard = $players[1]->play();
+        $tcard = $players[1]->play($hand);
         $next = $players[1];
         $hand->play($players[1], $tcard, $valid);
         $error = true;
-        do {
-            try {
-                $card = $players[2]->play();
-                $hand->play($players[2], $card, $valid);   
-                $error = false;     
-            }  catch (Exception $e) {
-                $players[2]->take($card);
-             }
-        } while($error);
+        $card = $players[2]->play($hand);
+        $hand->play($players[2], $card, $valid);   
         if ($card->rank() > $tcard->rank()) {
             $tcard = $card;
             $next = $players[2];
         }
-        $error = true;
-        do {
-            try {
-                $card = $players[3]->play();
-                $hand->play($players[3], $card, $valid);
-                $error = false;     
-            }  catch (Exception $e) { 
-                $players[3]->take($card);
-            }
-        } while($error);
+        $card = $players[3]->play($hand);
+        $hand->play($players[3], $card, $valid);
         if ($card->rank() > $tcard->rank()) {
             $tcard = $card;
             $next = $players[3];
         }
-        $error = true;
-        do {
-            try {
-                $card = $players[4]->play();
-                $hand->play($players[4], $card, $valid);
-                $error = false;     
-            }  catch (Exception $e) { 
-                $players[4]->take($card);
-            }
-        } while($error);
+        $card = $players[4]->play($hand);
+        $hand->play($players[4], $card, $valid);
         if ($card->rank() > $tcard->rank()) {
             $tcard = $card;
             $next = $players[4];

@@ -3,11 +3,10 @@
 namespace App\Logic\Games\TrickTaking;
 
 use App\Data\Cards\Card;
-use App\Data\Cards\CardPlayer;
 use App\Data\Cards\FrenchSuit;
 use Exception;
 
-class WhistPlayer implements CardPlayer {
+class WhistPlayer implements HandPlayer {
 
     public function __construct(private int $id, private string $name) {
 
@@ -29,12 +28,23 @@ class WhistPlayer implements CardPlayer {
         $this->hand = $cards;
     }
 
-    public function play(): Card {
+    public function play(Hand $hand): Card {
         if (!$this->hand) {
             throw new Exception("No cards left in the player's hand");
         }
-        $card = $this->hand[0];
-        unset($this->hand[0]);
+        $playedCards = array_map(fn($t) => $t->card(), $hand->currentTrick());
+        if ($playedCards) {
+            $leadSuit = $playedCards[0]->suit();
+            $ofSuit = array_filter($this->hand, function($c) use ($leadSuit) {
+                return $c->suit() == $leadSuit;
+            });
+            $card = $ofSuit[array_rand($ofSuit)];
+            $pos = array_search($card, $this->hand);
+        } else {
+            $card = $this->hand[0];
+            $pos = 0;
+        }
+        unset($this->hand[$pos]);
         $this->hand = array_values($this->hand);
         return $card;
     }
@@ -44,5 +54,4 @@ class WhistPlayer implements CardPlayer {
     }
 
     private array $hand;
-
 }

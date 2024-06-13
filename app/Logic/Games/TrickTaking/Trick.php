@@ -23,6 +23,7 @@ interface Trick {
     
     /**
      * The current cards in the trick
+     * @return list<TrickCard>
      */
     function trick(): array;
 
@@ -30,4 +31,24 @@ interface Trick {
      * True if the Trick is complete, i.e. all players have played a card.
      */
     function complete(): bool;
+}
+
+class TrickCard {
+
+    public function __construct(private int $playerId, private Card $card)    {
+        
+    }
+
+    public function playerId(): int {
+        return $this->playerId;
+    }
+
+
+    public function card(): Card {
+        return $this->card;
+    }
+
+    public function __toString() {
+        return "P ".$this->playerId." => ".$this->card;
+    }
 }

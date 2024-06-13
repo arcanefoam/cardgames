@@ -16,7 +16,5 @@ interface CardPlayer extends Player {
      */
     function startHand(array $cards);
 
-    function play(): Card;
-
     function take(Card $card): void;
 }

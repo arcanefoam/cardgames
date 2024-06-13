@@ -45,6 +45,13 @@ class WhistHand implements Hand {
         return $this;
     }
 
+    /**
+     * Return the cards played in the current trick
+     */
+    function currentTrick(): array {
+        return end($this->tricks)->trick();
+    }
+
     public function nextLead(): Player {
         return $this->players[$this->leadId];
     }

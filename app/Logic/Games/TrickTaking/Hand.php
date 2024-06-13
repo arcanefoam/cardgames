@@ -15,9 +15,14 @@ interface Hand {
     function start(Deck $deck): Hand;
 
     /**
-     * The trick being played
+     * Play the next trick in the hand, if possible
      */
     function nextTrick(): Hand;
+
+    /**
+     * Return the cards played in the current trick
+     */
+    function currentTrick(): array;
 
     /**
      * Pick the Player that will be the initial Lead

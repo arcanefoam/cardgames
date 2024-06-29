@@ -20,6 +20,11 @@ interface Hand {
     function nextTrick(): Hand;
 
     /**
+     * Return true if the current trick is complete
+     */
+    function trickComplete(): bool;
+
+    /**
      * Return the cards played in the current trick
      */
     function currentTrick(): array;
@@ -43,9 +48,9 @@ interface Hand {
      * Play a card
      * @param Player    $player The player making the play
      * @param Card      $card   The card played by the player
-     * @param callable  $valid  A function to validate if the play is valid. The callable accepts 
-     *                          an array of cards that has been played and the player 
      */
-    function play(Player $player, Card $card, callable $valid);
+    function play(Player $player, Card $card);
+
+    function currentPlayer(): Player;
 
 }

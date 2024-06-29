@@ -50,7 +50,7 @@ class PokerDeck implements Deck {
         return new PokerDeck($shuffled);
     }
     
-    public  function left(): int {
+    public function left(): int {
         return count($this->cards);
     }
 

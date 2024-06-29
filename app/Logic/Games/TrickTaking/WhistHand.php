@@ -5,7 +5,9 @@ namespace App\Logic\Games\TrickTaking;
 use \Exception;
 use App\Data\Cards\Card;
 use App\Data\Cards\Deck;
+use App\Data\Cards\FrenchCard;
 use App\Data\Game\Player;
+use App\Data\Cards\CardPlayer;
 
 
 class WhistHand implements Hand {
@@ -21,7 +23,9 @@ class WhistHand implements Hand {
      * We assume the deck is ready to use
      */
     public function start(Deck $deck): Hand {
+        info("Start hand");
         foreach ($this->players as $player) {
+            info("Give cards to ".$player->name());
             $cards = $deck->draw(13);
             $player->startHand($cards);
         }
@@ -64,9 +68,27 @@ class WhistHand implements Hand {
         return [];
     }
 
-    public function play(Player $player, Card $card, callable $valid): void {
+    public function play(Player $player, Card $card): void {
+        $valid = function (array $cards, FrenchCard $c, CardPlayer $p) {
+            if (count($cards) == 0) {
+                return true;
+            }
+            $leadSuit = $cards[0]->card()->suit();
+            if ($p->hasOfSuit($leadSuit)) {
+                return $c->suit() == $leadSuit;
+            }
+            return true;
+        };
         end($this->tricks)->play($player, $card, $valid);
     }   
+
+    function trickComplete(): bool {
+        return end($this->tricks)->complete();
+    }
+
+    function currentPlayer(): Player {
+        return end($this->tricks)->currentPlayer();
+    }
     
     /**
      * The first card in the trick is the lead suit.
@@ -79,14 +101,17 @@ class WhistHand implements Hand {
         $trick = current($this->tricks)->trick();
         $trickSuit = $trick[0]->card()->suit();
         usort($trick, function($a, $b) use ($trickSuit) {
+            info("Sorting ".$a->card()." vs ".$b->card());
             if ($a->card()->suit() == $trickSuit && $b->card()->suit() == $trickSuit) {
+                info("Same suit as trick suit");
                 return $b->card()->rank() - $a->card()->rank();
             }
             else if ($b->card()->suit() === $trickSuit) {
-                return -1;
+                info("");
+                return 1;
             }
             else if ($a->card()->suit() === $trickSuit) {
-                return 1;
+                return -1;
             }
         });
         return $trick[0]->playerId();

@@ -2,6 +2,8 @@
 
 namespace App\Logic\Games\TrickTaking;
 
+use Illuminate\Support\Facades\Log;
+
 use App\Data\Cards\Card;
 use App\Data\Game\Player;
 use Exception;
@@ -34,9 +36,12 @@ class SimpleTrick implements Trick {
 
     function play(Player $player, Card $card, callable $valid) {
         if ($this->complete()) {
+            Log::error("Trying to playe a Trick that is complete");
             throw new Exception("The trick is complete, no more plays are allowed");
         }
         if ($player->id() !== $this->currentPlayer) {
+            Log::error("The play was not made by the current player. ",
+                ['current' => $this->currentPlayer, 'played' => $player->id()]);
             throw new Exception("The play was not made by the current player");
         }
         if (($valid)($this->trick(), $card, $player)) {
@@ -48,7 +53,8 @@ class SimpleTrick implements Trick {
             }
             $this->currentPlayer = $next->id();
         } else {
-            throw new Exception("The played card is not valid for this trick");
+            Log::error("The played card is not valid");
+            throw new \Exception("The played card is not valid for this trick");
         }
         
     }

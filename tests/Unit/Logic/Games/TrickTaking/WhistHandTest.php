@@ -7,10 +7,8 @@ use PHPUnit\Framework\TestCase;
 use App\Data\Cards\FrenchCard;
 use App\Data\Cards\PokerDeck;
 use App\Data\Cards\CardPlayer;
-use App\Logic\Games\TrickTaking\Trick;
 use App\Logic\Games\TrickTaking\WhistHand;
 use App\Logic\Games\TrickTaking\WhistPlayer;
-
 
 class WhistHandTest extends TestCase {
 
@@ -91,34 +89,25 @@ class WhistHandTest extends TestCase {
         $hand = $hand->start($deck);
         $hand = $hand->nextTrick();
         // Play the hand
-        $valid = function (array $cards, FrenchCard $c, CardPlayer $p) {
-            if (count($cards) == 0) {
-                return true;
-            }
-            $leadSuit = $cards[0]->card()->suit();
-            if ($p->hasOfSuit($leadSuit)) {
-                return $c->suit() == $leadSuit;
-            }
-            return true;
-        };
+       
         $tcard = $players[1]->play($hand);
         $next = $players[1];
-        $hand->play($players[1], $tcard, $valid);
+        $hand->play($players[1], $tcard);
         $error = true;
         $card = $players[2]->play($hand);
-        $hand->play($players[2], $card, $valid);   
+        $hand->play($players[2], $card);   
         if ($card->rank() > $tcard->rank()) {
             $tcard = $card;
             $next = $players[2];
         }
         $card = $players[3]->play($hand);
-        $hand->play($players[3], $card, $valid);
+        $hand->play($players[3], $card);
         if ($card->rank() > $tcard->rank()) {
             $tcard = $card;
             $next = $players[3];
         }
         $card = $players[4]->play($hand);
-        $hand->play($players[4], $card, $valid);
+        $hand->play($players[4], $card);
         if ($card->rank() > $tcard->rank()) {
             $tcard = $card;
             $next = $players[4];
@@ -126,5 +115,7 @@ class WhistHandTest extends TestCase {
         $hand = $hand->nextTrick();
         $this->assertEquals($next->id(), $hand->nextLead()->id());
     }
+
+    
 
 }

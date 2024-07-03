@@ -33,7 +33,7 @@ class TrainingEnvironment implements Environment {
     }
 
     public function getState(): WhistState {
-        return new WhistState($this->game);
+        return new WhistState($this->game, $this->agentPlayer);
     }
 
     public function act(int $actionId): float {

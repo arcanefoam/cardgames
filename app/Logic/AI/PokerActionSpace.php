@@ -14,11 +14,12 @@ class PokerActionSpace extends ActionSpace {
     public function __construct() {
         $deck = new PokerDeck();
         $deck = $deck->reset();
-        $pos = 0;
+        $pos = 2;
         while ($deck->left() > 0) {
             $card = $deck->drawOne();
             $this->addAction($pos++, $card);
         }
+        //info("PokerActionSpace init", ['space' => $this->actions]);
     }
 
     public function addAction(int $id, Object $card): void

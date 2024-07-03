@@ -14,8 +14,11 @@ use RL\DQN\EGreedyAgent;
 use RL\DQN\ModelProvider;
 use RL\DQN\ExperienceReplayer;
 use RL\Environment;
+use RL\State as State;
 
 class AgentWhistPlayer extends EGreedyAgent implements HandPlayer {
+
+    use LegalActionTrait;
 
     use PrintHand;
 
@@ -78,13 +81,32 @@ class AgentWhistPlayer extends EGreedyAgent implements HandPlayer {
         return $this->hand;
     }
 
-    /* Since the AI picks any card, we need to check that the player actually has the card */
+    /*
+     * Since the AI picks any card, we need to check that the player actually has the card.
+       The card is checked after the AI has picked a card, so if the agent has is, we asume
+       the card has been played  */
     public function checkCard(Card $card): bool {
-        if(!in_array($card, $this->hand)) {
-            Log::error("Agent does not have card", ['hand' =>  $this->handToLog($this->hand), 'card' => $this->cardToLog($card)]);
-            throw new AgentException("Agent player does not have the card");
+        $key = array_search($card, $this->hand);
+        if($key !== false) {
+            unset($this->hand[$key]);
+            return true;
         }
-        return true;
+        Log::error("Agent does not have card", ['hand' =>  $this->handToLog($this->hand), 'card' => $this->cardToLog($card)]);
+        throw new AgentException("Agent player does not have the card");
+    }
+
+    /**
+     * override to pick only legal moves, for faster training
+     */
+    protected function chooseRandomAction(State $state): int
+    {
+        $availableActions = [];
+        foreach ($this->env->getActionSpace()->getActionIds() as $actionId) {
+            if ($this->isActionLegal($actionId, $state)) {
+                $availableActions[] = $actionId;
+            }
+        }
+        return $availableActions[array_rand($availableActions)];
     }
 
     private array $hand;

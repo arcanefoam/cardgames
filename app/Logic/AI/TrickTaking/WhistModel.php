@@ -112,7 +112,7 @@ class WhistModel implements DQNModel {
 
     private function stateToFeatures(WhistState $state, int $actionId): array
     {
-        $actions = array_fill(0, 52, 0.0);
+        $actions = array_fill(2, 52, 0.0);
         $actions[$actionId] = 1.0;
         $features = array_merge($state->table(), $actions);
         return $features;

@@ -2,35 +2,34 @@
 
 namespace App\Logic\AI\TrickTaking;
 
-use App\Data\Game\Player;
 use App\Data\Cards\FrenchSuit;
+use App\Logic\Games\TrickTaking\HandPlayer;
 use App\Logic\Games\TrickTaking\WhistGame;
 use RL\State as RLState;
 
 class WhistState implements RLState {
 
-    public function __construct(WhistGame $game) {
+    public function __construct(WhistGame $game, private HandPlayer $agent) {
         // Need to place each card in its position in 52 slots
-        $this->table = array_fill(1, 52, 0); 
+        $this->table = array_fill(2, 52, 0); 
         foreach ($game->currentHand()->currentTrick() as $card) {
             $base = match($card->card()->suit()) {
-                FrenchSuit::Diamonds => 0,
-                FrenchSuit::Spades => 12,
-                FrenchSuit::Hearts => 25,
-                FrenchSuit::Clubs => 38,
+                FrenchSuit::Clubs => 0,
+                FrenchSuit::Diamonds => 13,
+                FrenchSuit::Hearts => 26,
+                FrenchSuit::Spades => 39,
             };
-            $this->table[$base+$card->card()->rank()];
+            $this->table[$base+$card->card()->rank()] = 1;
         };
-        $this->currentPlayer = $game->currentPlayer();
-        $this->playerHand = array_fill(1, 52, 0); 
-        foreach ($game->currentPlayer()->hand() as $card) {
+        $this->playerHand = array_fill(2, 52, 0); 
+        foreach ($this->agent->hand() as $card) {
             $base = match($card->suit()) {
-                FrenchSuit::Diamonds => 0,
-                FrenchSuit::Spades => 12,
-                FrenchSuit::Hearts => 25,
-                FrenchSuit::Clubs => 38,
+                FrenchSuit::Clubs => 0,
+                FrenchSuit::Diamonds => 13,
+                FrenchSuit::Hearts => 26,
+                FrenchSuit::Spades => 39,
             };
-            $this->playerHand[$base+$card->rank()];
+            $this->playerHand[$base+$card->rank()] = 1;
         };
         $this->uid = $this->defineUid($game);
     }
@@ -49,13 +48,11 @@ class WhistState implements RLState {
 
     private string $uid;
     private array $table;
-    private Player $currentPlayer;
 
     private function defineUid(WhistGame $game): string {
         $gUid = $game->uid();
-        $player = $game->currentPlayer();
         $hand = "";
-        foreach($player->hand() as $c) {
+        foreach($this->agent->hand() as $c) {
             $hand .= " ".$c;
         }
         return <<<EOT

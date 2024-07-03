@@ -40,6 +40,7 @@ class WhistHand implements Hand {
             return $this;
         }
         if (end($this->tricks)->complete()) {
+            info("Whist Hand", ['played' => count($this->tricks)]);
             $leadId = $this->next();
             return new WhistHand(
                 $this->players,
@@ -101,13 +102,13 @@ class WhistHand implements Hand {
         $trick = current($this->tricks)->trick();
         $trickSuit = $trick[0]->card()->suit();
         usort($trick, function($a, $b) use ($trickSuit) {
-            info("Sorting ".$a->card()." vs ".$b->card());
+            //info("Sorting ".$a->card()." vs ".$b->card());
             if ($a->card()->suit() == $trickSuit && $b->card()->suit() == $trickSuit) {
-                info("Same suit as trick suit");
+                //info("Same suit as trick suit");
                 return $b->card()->rank() - $a->card()->rank();
             }
             else if ($b->card()->suit() === $trickSuit) {
-                info("");
+                //info("");
                 return 1;
             }
             else if ($a->card()->suit() === $trickSuit) {
